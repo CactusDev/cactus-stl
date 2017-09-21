@@ -1,4 +1,3 @@
-import { emit } from "cluster";
 
 import * as Bluebird from "bluebird";
 import { EventEmitter } from "events";
@@ -29,13 +28,13 @@ export class RedisController extends EventEmitter {
             }, 2000);
             this.client = redis.createClient(this.options);
 
-            this.client.on("error", (error: string) => emit("error", error));
+            this.client.on("error", (error: string) => this.emit("error", error));
             this.client.on("ready", () => {
                 clearTimeout(connectionTimeout);
                 resolve();
             });
 
-            this.client.on("reconnection", () => emit("reconnection"));
+            this.client.on("reconnection", () => this.emit("reconnection"));
         });
     }
 
