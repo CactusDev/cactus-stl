@@ -1,0 +1,31 @@
+{
+  "name": "cactus-stl",
+  "version": "1.0.0",
+  "description": "Standard library for CactusDev projects",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prepublish": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cactusdev/cactus-stl.git"
+  },
+  "author": "CactusDev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cactusdev/cactus-stl/issues"
+  },
+  "homepage": "https://github.com/cactusdev/cactus-stl#readme",
+  "devDependencies": {
+    "@types/bluebird": "^3.5.11",
+    "@types/node": "^8.0.28",
+    "typescript": "^2.5.2"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "redis": "^2.8.0"
+  }
+}
