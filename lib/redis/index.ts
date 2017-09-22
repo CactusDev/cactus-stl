@@ -7,6 +7,10 @@ const redis = require("redis");
 Bluebird.promisifyAll(redis.RedisClient);
 Bluebird.promisifyAll(redis.Multi);
 
+interface Subscriptions {
+    [event: string]: Function;
+}
+
 /**
  * Handle interactions with Redis.
  * 
@@ -16,6 +20,11 @@ Bluebird.promisifyAll(redis.Multi);
 export class RedisController extends EventEmitter {
 
     private client: any = null;
+    
+    private pub: any = null;
+    private sub: any = null;
+    
+    private subscriptions: Subscriptions = {};
 
     constructor(private options: RedisConnectionOptions) {
         super();
@@ -30,8 +39,14 @@ export class RedisController extends EventEmitter {
 
             this.client.on("error", (error: string) => this.emit("error", error));
             this.client.on("ready", () => {
-                clearTimeout(connectionTimeout);
-                resolve();
+                this.pub = redis.createClient(this.options);
+                this.sub = redis.createClient(this.options);
+
+                this.pub.on("ready", () => this.sub.on("ready", () => {
+                    this.listenForEvents();
+                    clearTimeout(connectionTimeout);
+                    resolve();
+                }));
             });
 
             this.client.on("reconnection", () => this.emit("reconnection"));
@@ -46,28 +61,58 @@ export class RedisController extends EventEmitter {
 
             this.client.on("end", () => {
                 clearTimeout(disconnectionTimeout);
+                
+                this.sub.unsubscribe();
+                this.sub.quit();
+                this.pub.quit();
+                
                 resolve();
             });
             this.client.quit();
         });
     }
+    
+    private async listenForEvents() {
+        this.sub.on("message", (channel: string, message: string) => {
+            console.log(channel, message);
+            if (!this.subscriptions[channel]) {
+                return;
+            }
+            
+            this.subscriptions[channel](message);
+        });
+    }
 
     public async set(key: string, value: string, expire?: number): Promise<string> {
         if (expire) {
-            return this.client.setexAsync(key, expire, value);
+            return this.client.setex(key, expire, value);
         }
-        return this.client.setAsync(key, value);
+        return this.client.set(key, value);
     }
 
     public async get(key: string): Promise<any> {
-        return this.client.getAsync(key);
+        return this.client.get(key);
     }
 
     public async delete(key: string): Promise<any> {
-        return this.client.delAsync(key);
+        return this.client.del(key);
     }
 
     public async increment(key: string): Promise<any> {
-        return this.client.incrAsync(key);
+        return this.client.incr(key);
+    }
+    
+    public async subscribe(channel: string, callback: Function) {
+        this.sub.subscribe(channel);
+        this.subscriptions[channel] = callback;
+    }
+    
+    public async unsubscribe(channel: string) {
+        this.sub.unsubscribe(channel);
+        delete this.subscriptions[channel];
+    }
+    
+    public async publish(channel: string, data: string) {
+        this.pub.publish(channel, data);
     }
 }
