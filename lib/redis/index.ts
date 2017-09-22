@@ -104,7 +104,14 @@ export class RedisController extends EventEmitter {
     }
 
     public async get(key: string): Promise<any> {
-        return this.client.get(key);
+        return new Promise<any>((resolve: any, reject: any) => {
+            this.client.get(key, (err: any, reply: any) => {
+                if (err) {
+                    return reject(err);
+                }
+                return resolve(reply);
+            });            
+        });
     }
 
     public async delete(key: string): Promise<any> {
