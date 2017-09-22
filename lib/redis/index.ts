@@ -12,6 +12,19 @@ interface Subscriptions {
 }
 
 /**
+ * Configure how Redis will be connected to
+ * 
+ * @export
+ * @interface RedisConnectionOptions
+ */
+export interface RedisConnectionOptions {
+    db: number;
+    host: string;
+    port: number;
+    password: string;
+}
+
+/**
  * Handle interactions with Redis.
  * 
  * @export
