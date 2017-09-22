@@ -1,6 +1,6 @@
 {
   "name": "cactus-stl",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Standard library for CactusDev projects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
