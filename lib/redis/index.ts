@@ -87,7 +87,6 @@ export class RedisController extends EventEmitter {
     
     private async listenForEvents() {
         this.sub.on("message", (channel: string, message: string) => {
-            console.log(channel, message);
             if (!this.subscriptions[channel]) {
                 return;
             }
