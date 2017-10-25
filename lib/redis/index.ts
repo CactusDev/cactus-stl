@@ -47,7 +47,12 @@ export class RedisController extends EventEmitter {
         return new Promise<any>((resolve: any, reject: any) => {
             let connectionTimeout = setTimeout(() => {
                 return reject("Connection to Redis timed out.");
-            }, 2000);
+            }, 6000);
+
+            if (this.options.password === "") {
+                this.options.password = undefined;
+            }
+
             this.client = redis.createClient(this.options);
 
             this.client.on("error", (error: string) => this.emit("error", error));
