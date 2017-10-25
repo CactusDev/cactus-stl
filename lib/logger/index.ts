@@ -22,7 +22,7 @@ export class Logger {
 			console: {
 				level: !!debug ? "debug" : "info",
 				colorize: !!disableColor ? false : true,
-				label: title(container);
+				label: title(container)
 			}
 		});
 	}
