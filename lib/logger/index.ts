@@ -10,7 +10,7 @@ export class Logger {
 	public static initialize() {
 		winston = new (Winston.Logger)();
 
-		winston.addColors({
+		Winston.addColors({
 			info: "green",
 			warn: "yellow",
 			error: "red"
@@ -18,7 +18,7 @@ export class Logger {
 	}
 
 	public static addContainer(container: string, debug?: boolean, disableColor?: boolean) {
-		winston.loggers.add(container.toLowerCase(), {
+		Winston.loggers.add(container.toLowerCase(), {
 			console: {
 				level: !!debug ? "debug" : "info",
 				colorize: !!disableColor ? false : true,
@@ -29,16 +29,16 @@ export class Logger {
 
 	public static log(container: string, ...message: string[]) {
 		const joined = message.map(part => part.toString());
-		winston.loggers.get(container.toLowerCase()).info(joined);
+		Winston.loggers.get(container.toLowerCase()).info(joined);
 	}
 
 	public static warn(container: string, ...message: string[]) {
 		const joined = message.map(part => part.toString());
-		winston.loggers.warn(container.toLowerCase()).info(joined);
+		Winston.loggers.warn(container.toLowerCase()).info(joined);
 	}
 
 	public static error(container: string, ...message: string[]) {
 		const joined = message.map(part => part.toString());
-		winston.loggers.get(container.toLowerCase()).error(joined);
+		Winston.loggers.get(container.toLowerCase()).error(joined);
 	}
 }
