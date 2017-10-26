@@ -3,12 +3,9 @@ const Winston = require("winston");
 
 import { title } from "../util";
 
-let winston: any;
-
 export class Logger {
 
 	public static initialize() {
-		winston = new (Winston.Logger)();
 
 		Winston.addColors({
 			info: "green",
@@ -17,28 +14,31 @@ export class Logger {
 		});
 	}
 
-	public static addContainer(container: string, debug?: boolean, disableColor?: boolean) {
+	public static addContainer(container: string, level?: string, disableColor?: boolean) {
 		Winston.loggers.add(container.toLowerCase(), {
 			console: {
-				level: !!debug ? "debug" : "info",
-				colorize: !!disableColor ? false : true,
+				level: level || "debug",
+				colorize: !!disableColor || true,
 				label: title(container)
 			}
 		});
 	}
 
 	public static log(container: string, ...message: string[]) {
-		const joined = message.map(part => part.toString());
+		let joined = "";
+		message.forEach(part => joined += part.toString());
 		Winston.loggers.get(container.toLowerCase()).info(joined);
 	}
 
 	public static warn(container: string, ...message: string[]) {
-		const joined = message.map(part => part.toString());
-		Winston.loggers.warn(container.toLowerCase()).info(joined);
+		let joined = "";
+		message.forEach(part => joined += part.toString());
+		Winston.loggers.warn(container.toLowerCase()).warn(joined);
 	}
 
 	public static error(container: string, ...message: string[]) {
-		const joined = message.map(part => part.toString());
+		let joined = "";
+		message.forEach(part => joined += part.toString());
 		Winston.loggers.get(container.toLowerCase()).error(joined);
 	}
 }
