@@ -26,19 +26,19 @@ export class Logger {
 
 	public static log(container: string, ...message: string[]) {
 		let joined = "";
-		message.forEach(part => joined += part.toString());
-		Winston.loggers.get(container.toLowerCase()).info(joined);
+		message.forEach(part => joined += " " + part.toString());
+		Winston.loggers.get(container.toLowerCase().trim()).info(joined);
 	}
 
 	public static warn(container: string, ...message: string[]) {
 		let joined = "";
-		message.forEach(part => joined += part.toString());
-		Winston.loggers.warn(container.toLowerCase()).warn(joined);
+		message.forEach(part => joined += " " + part.toString());
+		Winston.loggers.warn(container.toLowerCase().trim()).warn(joined);
 	}
 
 	public static error(container: string, ...message: string[]) {
 		let joined = "";
-		message.forEach(part => joined += part.toString());
-		Winston.loggers.get(container.toLowerCase()).error(joined);
+		message.forEach(part => joined += " " + part.toString());
+		Winston.loggers.get(container.toLowerCase().trim()).error(joined);
 	}
 }
