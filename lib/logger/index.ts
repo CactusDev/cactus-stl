@@ -1,44 +1,36 @@
 
-const Winston = require("winston");
-
 import { title } from "../util";
+
+import * as Colors from "colors/safe";
 
 export class Logger {
 
-	public static initialize() {
+	private static isDebug: boolean;
 
-		Winston.addColors({
-			info: "green",
-			warn: "yellow",
-			error: "red"
-		});
+	public static setDebug(debug: boolean) {
+		this.isDebug = debug;
 	}
 
-	public static addContainer(container: string, level?: string, disableColor?: boolean) {
-		Winston.loggers.add(container.toLowerCase(), {
-			console: {
-				level: level || "debug",
-				colorize: !!disableColor || true,
-				label: title(container)
-			}
-		});
-	}
-
-	public static log(container: string, ...message: string[]) {
-		let joined = "";
-		message.forEach(part => joined += " " + part.toString());
-		Winston.loggers.get(container.toLowerCase().trim()).info(joined);
+	public static info(container: string, ...message: string[]) {
+		let joined = message.join(" ");
+		console.log(`${Colors.green("info")}(${Colors.cyan(container)}): ${joined}`);
 	}
 
 	public static warn(container: string, ...message: string[]) {
-		let joined = "";
-		message.forEach(part => joined += " " + part.toString());
-		Winston.loggers.warn(container.toLowerCase().trim()).warn(joined);
+		let joined = message.join(" ");
+		console.log(`${Colors.yellow("warn")}(${Colors.cyan(container)}): ${joined}`);
 	}
 
 	public static error(container: string, ...message: string[]) {
-		let joined = "";
-		message.forEach(part => joined += " " + part.toString());
-		Winston.loggers.get(container.toLowerCase().trim()).error(joined);
+		let joined = message.join(" ");
+		console.log(`${Colors.red("error")}(${Colors.cyan(container)}): ${joined}`);
+	}
+
+	public static debug(container: string, ...message: string[]) {
+		if (!this.debug) {
+			return;
+		}
+		let joined = message.join(" ");
+		console.log(`${Colors.blue("debug")}(${Colors.cyan(container)}): ${joined}`);
 	}
 }
