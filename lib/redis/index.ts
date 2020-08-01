@@ -65,6 +65,7 @@ export class RedisController extends EventEmitter {
                     clearTimeout(connectionTimeout);
                     resolve();
                 }));
+                this.pub.send_command("config", ["set", "notify-keyspace-events", "Ex"], async (e: any, r: any) => await this.onExpirationEvent(e, r))
             });
 
             this.client.on("reconnection", () => this.emit("reconnection"));
@@ -138,5 +139,14 @@ export class RedisController extends EventEmitter {
     
     public async publish(channel: string, data: string) {
         this.pub.publish(channel, data);
+    }
+
+    private async onExpirationEvent(e: any, r: any) {
+        const expiredKey = "__keyevent@" + this.options.db + "__:expired"
+        this.sub.subscribe(expiredKey, () => {
+            this.sub.on("message", (chan: any, msg: any) => {
+                this.emit("expiration", { chan, msg })
+            })
+        })
     }
 }
