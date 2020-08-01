@@ -48,28 +48,3 @@ async function setup() {
 
 setup();
 ```
-
-#### Using Logger
-
-```typescript
-
-import { Logger } from "cactus-stl";
-
-function setup() {
-    // Setup the logger
-    Logger.initialize();
-
-    // Containers can be added by just name
-    Logger.addContainer("core");
-    // Disable debug logging on a container
-    Logger.addContainer("things", false);
-    // You can also disable colors
-    Logger.addContainer("testing", true, false);
-
-    Logger.log("core", "Hello,");
-    Logger.warn("things", "world");
-    Logger.error("testing", "!");
-}
-
-setup();
-```
