@@ -138,7 +138,33 @@ export class RedisController extends EventEmitter {
     }
     
     public async publish(channel: string, data: string) {
-        this.pub.publish(channel, data);
+        this.pub.publish(channel, data)
+    }
+
+    public async scan(pattern: string, chunkSize?: number, cursor?: string): Promise<string[]> {
+        chunkSize = chunkSize ? chunkSize : 500
+        cursor = cursor ? cursor : "0"
+
+        return new Promise<string[]>((resolve, reject) => {
+            let allKeys: string[] = [];
+
+            this.client.scan(cursor, "MATCH", pattern, "COUNT", chunkSize, async (err: any, reply: any) => {
+                if (err) {
+                    return reject(err)
+                }
+                cursor = reply[0];
+
+                const keys = reply[1]
+                keys.forEach((key: string) => allKeys.push(key))
+
+                if (cursor !== "0") {
+                    const result = await this.scan(pattern, chunkSize, cursor)
+                    result.forEach(key => allKeys.push(key))
+                }
+    
+                return resolve(allKeys)
+            })
+        })
     }
 
     private async onExpirationEvent(e: any, r: any) {
